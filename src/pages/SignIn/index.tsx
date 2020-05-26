@@ -4,10 +4,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   View,
-  ScrollView,
   Keyboard,
-  TouchableOpacity,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -23,6 +22,7 @@ import logoImg from '../../assets/logo.png';
 
 const SignIn: React.FC = () => {
   const createAccountButtonRef = useRef() as React.MutableRefObject<View>;
+  const navidation = useNavigation();
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', keyBoardDidShowHandler);
@@ -77,7 +77,7 @@ const SignIn: React.FC = () => {
       </KeyboardAvoidingView>
 
       <View ref={createAccountButtonRef}>
-        <CreateAccountButton>
+        <CreateAccountButton onPress={() => navidation.navigate('SignUp')}>
           <Icon name="log-in" size={20} color="#ff9000" />
           <CreateAccountButtonText>Criar uma conta</CreateAccountButtonText>
         </CreateAccountButton>
