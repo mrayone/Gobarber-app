@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback, ComponentElement } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -7,6 +7,8 @@ import {
   Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core';
 import Icon from 'react-native-vector-icons/Feather';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -21,8 +23,12 @@ import {
 import logoImg from '../../assets/logo.png';
 
 const SignIn: React.FC = () => {
-  const createAccountButtonRef = useRef() as React.MutableRefObject<View>;
+  const createAccountButtonRef = useRef<View>(null);
   const navidation = useNavigation();
+  const formRef = useRef<FormHandles>(null);
+  const handleSign = useCallback((data: object) => {
+    console.log(data);
+  }, []);
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', keyBoardDidShowHandler);
@@ -35,13 +41,13 @@ const SignIn: React.FC = () => {
   }, []);
 
   const keyBoardDidShowHandler = (): void => {
-    createAccountButtonRef.current.setNativeProps({
+    createAccountButtonRef.current?.setNativeProps({
       display: 'none',
     });
   };
 
   const keyBoardDidHideHandler = (): void => {
-    createAccountButtonRef.current.setNativeProps({
+    createAccountButtonRef.current?.setNativeProps({
       display: 'flex',
     });
   };
@@ -58,17 +64,18 @@ const SignIn: React.FC = () => {
           <View>
             <Title>Faça seu logon</Title>
           </View>
+          <Form onSubmit={handleSign} ref={formRef}>
+            <Input name="email" icon="mail" placeholder="E-mail" />
+            <Input name="password" icon="lock" placeholder="Senha" />
 
-          <Input name="email" icon="mail" placeholder="E-mail" />
-          <Input name="password" icon="lock" placeholder="Senha" />
-
-          <Button
-            onPress={() => {
-              console.log('Deu!!');
-            }}
-          >
-            Entrar
-          </Button>
+            <Button
+              onPress={() => {
+                formRef.current?.submitForm();
+              }}
+            >
+              Entrar
+            </Button>
+          </Form>
 
           <ForgotPassword onPress={() => {}}>
             <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>

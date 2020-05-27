@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 import {
   Image,
@@ -7,6 +7,8 @@ import {
   View,
   Keyboard,
 } from 'react-native';
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import Input from '../../components/Input';
@@ -15,9 +17,10 @@ import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 import logoImg from '../../assets/logo.png';
 
 const SignUp: React.FC = () => {
-  const backToSignInRef = useRef() as React.MutableRefObject<View>;
+  const backToSignInRef = useRef<View>(null);
   const navigation = useNavigation();
 
+  const formRef = useRef<FormHandles>(null);
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', keyBoardDidShowHandler);
     Keyboard.addListener('keyboardDidHide', keyBoardDidHideHandler);
@@ -28,14 +31,18 @@ const SignUp: React.FC = () => {
     };
   }, []);
 
+  const handleSignUp = useCallback((data: object) => {
+    console.log(data);
+  }, []);
+
   const keyBoardDidShowHandler = (): void => {
-    backToSignInRef.current.setNativeProps({
+    backToSignInRef.current?.setNativeProps({
       display: 'none',
     });
   };
 
   const keyBoardDidHideHandler = (): void => {
-    backToSignInRef.current.setNativeProps({
+    backToSignInRef.current?.setNativeProps({
       display: 'flex',
     });
   };
@@ -53,17 +60,19 @@ const SignUp: React.FC = () => {
             <Title>Criar sua conta</Title>
           </View>
 
-          <Input name="Nome" icon="user" placeholder="Nome" />
-          <Input name="email" icon="mail" placeholder="E-mail" />
-          <Input name="password" icon="lock" placeholder="Senha" />
+          <Form onSubmit={handleSignUp} ref={formRef}>
+            <Input name="name" icon="user" placeholder="Nome" />
+            <Input name="email" icon="mail" placeholder="E-mail" />
+            <Input name="password" icon="lock" placeholder="Senha" />
 
-          <Button
-            onPress={() => {
-              console.log('Deu!!');
-            }}
-          >
-            Entrar
-          </Button>
+            <Button
+              onPress={() => {
+                formRef.current?.submitForm();
+              }}
+            >
+              Entrar
+            </Button>
+          </Form>
         </Container>
       </KeyboardAvoidingView>
 
