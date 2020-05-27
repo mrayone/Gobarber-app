@@ -6,6 +6,7 @@ import {
   Platform,
   View,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
@@ -18,6 +19,8 @@ import logoImg from '../../assets/logo.png';
 
 const SignUp: React.FC = () => {
   const backToSignInRef = useRef<View>(null);
+  const senhaInputRef = useRef<TextInput>(null);
+  const emailInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
 
   const formRef = useRef<FormHandles>(null);
@@ -29,6 +32,10 @@ const SignUp: React.FC = () => {
       Keyboard.removeListener('keyboardDidShow', keyBoardDidShowHandler);
       Keyboard.removeListener('keyboardDidHide', keyBoardDidHideHandler);
     };
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    formRef.current?.submitForm();
   }, []);
 
   const handleSignUp = useCallback((data: object) => {
@@ -61,17 +68,41 @@ const SignUp: React.FC = () => {
           </View>
 
           <Form onSubmit={handleSignUp} ref={formRef}>
-            <Input name="name" icon="user" placeholder="Nome" />
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Senha" />
-
-            <Button
-              onPress={() => {
-                formRef.current?.submitForm();
+            <Input
+              autoCapitalize="words"
+              name="name"
+              icon="user"
+              placeholder="Nome"
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                emailInputRef.current?.focus();
               }}
-            >
-              Entrar
-            </Button>
+            />
+            <Input
+              name="email"
+              ref={emailInputRef}
+              keyboardType="email-address"
+              autoCorrect={false}
+              autoCapitalize="none"
+              icon="mail"
+              placeholder="E-mail"
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                senhaInputRef.current?.focus();
+              }}
+            />
+            <Input
+              secureTextEntry
+              ref={senhaInputRef}
+              textContentType="newPassword"
+              name="password"
+              icon="lock"
+              placeholder="Senha"
+              returnKeyType="send"
+              onSubmitEditing={handleSubmit}
+            />
+
+            <Button onPress={handleSubmit}>Entrar</Button>
           </Form>
         </Container>
       </KeyboardAvoidingView>

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useCallback, ComponentElement } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
   View,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
@@ -26,8 +27,14 @@ const SignIn: React.FC = () => {
   const createAccountButtonRef = useRef<View>(null);
   const navidation = useNavigation();
   const formRef = useRef<FormHandles>(null);
+  const passwordInpuRef = useRef<TextInput>(null);
+
   const handleSign = useCallback((data: object) => {
     console.log(data);
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    formRef.current?.submitForm();
   }, []);
 
   useEffect(() => {
@@ -65,16 +72,29 @@ const SignIn: React.FC = () => {
             <Title>Faça seu logon</Title>
           </View>
           <Form onSubmit={handleSign} ref={formRef}>
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Senha" />
-
-            <Button
-              onPress={() => {
-                formRef.current?.submitForm();
+            <Input
+              name="email"
+              autoCorrect={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              icon="mail"
+              placeholder="E-mail"
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                passwordInpuRef.current?.focus();
               }}
-            >
-              Entrar
-            </Button>
+            />
+            <Input
+              secureTextEntry
+              name="password"
+              icon="lock"
+              ref={passwordInpuRef}
+              placeholder="Senha"
+              returnKeyType="send"
+              onSubmitEditing={handleSubmit}
+            />
+
+            <Button onPress={handleSubmit}>Entrar</Button>
           </Form>
 
           <ForgotPassword onPress={() => {}}>
