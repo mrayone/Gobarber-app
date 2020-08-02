@@ -39,6 +39,7 @@
     "react-hooks/exhaustive-deps": "warn",
     "no-unused-expressions": "off",
     "no-use-before-define": "off",
+    "no-useless-return": "off",
     "import/no-duplicates": "off",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
